@@ -1,0 +1,50 @@
+01 Cademario - Curio Cademario N46.022329 E8.885900
+02 Monte Lema Miglieglia N46.023641 E8.856273
+03 Montagnola - Monte Croce Montagnola N45.982053 E8.917100
+04 Monte San Salvatore - Morcote Lugano N45.990466 E8.945214
+05 Monte San Giorgio Meride N45.890622 E8.951969
+06 Casima - Castel San Pietro Casima N45.890557 E9.037048
+07 Bruzella - Monte Bisbino Bruzella N45.882916 E9.038201
+08 Monte Generoso Rovio N45.933365 E8.987116
+09 Monte Bre - Monte Boglia Cassarate N46.006348 E8.970043
+10 Cima di Fojorina Certara N46.085148 E9.058877
+11 Denti della Vecchia Sonvico N46.057713 E8.993146
+12 Monte Bar Bidogno N46.079976 E9.001638
+13 Monte Tamaro von Rivera Rivera N46.126794 E8.919913
+14 Monte Gambarogno San Nazarro N46.133021 E8.804363
+15 Alpe di Neggia Corte di Neggia N46.110670 E8.845431
+16 Sassariente Gordola N46.181920 E8.862541
+17 Valle Morobbia Carena N46.168169 E9.086709
+18 Santa Maria in Calanca - Cama Santa Maria in Calanca N46.263002 E9.145084
+19 Cardada - Mergoscia Talstation N46.175799 E8.792086
+20 Lavertezzo - Mergoscia Lavertezzo N46.260306 E8.836050
+21 Sonogno - Brione Sonogno N46.348728 E8.784972
+22 Frasco - Alpe dell Efra Frasco N46.338012 E8.805200
+23 Sonogno - Lago Barone Sonogno N46.350285 E8.786682
+24 Brissago - Ronco sopra Ascona Brissago N46.118249 E8.710931
+25 Verdasio - Rasa - Intragna Talstation N46.165255 E8.648728
+26 Loco - Intragna Loco N46.202177 E8.671477
+27 Monte di Comino Verdasio N46.164918 E8.636713
+28 Pilone Spruga N46.200372 E8.568107
+29 Lago und Cappana dAlzasca Vergeletto N46.228351 E8.596915
+30 Maggia - Aurigeno - Gordevio Maggia N46.246290 E8.705845
+31 Valle del Salto Maggia N46.246495 E8.707860
+32 Cevio - Lago di Sascola Cevio N46.316392 E8.602107
+33 Alpe Gelato Cimalmotto N46.282849 E8.489644
+34 Bosco-Gurin - Corino Bosco-Gurin N46.316453 E8.492490
+35 Guriner Furka Bosco-Gurin N46.316449 E8.492498
+36 Foroglio - Laghi della Crosa Foroglio N46.373460 E8.548264
+37 Rifugio Piano delle Creste San Carlo N46.407927 E8.525345
+38 Cap. Basodino - Lago di Robiei San Carlo N46.411407 E8.525834
+39 Fusio - Alpe Magnola Fusio N46.443618 E8.663416
+40 Val Sambuco Fusio N46.444216 E8.662957
+41 Olivone - Acquarossa Olivone N46.529223 E8.942478
+42 Capanna Adula Olivone N46.529214 E8.942464
+43 Strada alta 1 Airolo N46.527716 E8.608827
+44 Strada alta 2 Osco N46.493493 E8.781730
+45 Strada alta 3 Anzonico N46.431439 E8.862695
+46 Cap. Campo Tencia - L. Tremorgio Dalpe N46.472946 E8.774496
+47 Ambri - Pian Mott - Fiesso Ambri N46.509970 E8.692892
+48 Lago Ritom Talstation N46.517665 E8.675058
+49 Alpe di Pesciuem - Ossasco Airolo N46.523828 E8.602909
+50 Cap. Corno Gries - Griesgletscher Alpe di Cruina N46.472850 E8.425431
