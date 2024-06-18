@@ -1,0 +1,4 @@
+GPXpert~=0.0.post1.dev1+g5cab12b
+pytest~=8.2.2
+setuptools~=69.2.0
+pytest-cov~=5.0.0
