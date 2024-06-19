@@ -141,9 +141,13 @@ if __name__ == "__main__":
     #    executing it as a script.
     #    https://docs.python.org/3/library/__main__.html
 
+    # Usage from terminal:
+    #
+    #   python src/gpxpert/skeleton.py 7
+    #
     # After installing your project with pip, users can also run your Python
     # modules as scripts via the ``-m`` flag, as defined in PEP 338::
     #
-    #     python -m gpxpert.skeleton 42
+    #   python -m gpxpert.skeleton 42
     #
     run()
