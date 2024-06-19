@@ -2,7 +2,7 @@ import argparse
 import logging
 import sys
 
-# from gpxpert import __version__
+from gpxpert import __version__
 from gpxpert.WaypointTableConverter.WaypointTableConverter import WaypointTableConverter
 
 _logger = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ def parse_args(args):
     parser.add_argument(
         "--version",
         action="version",
-        version=f"GPXpert"  # {__version__}",
+        version=f"GPXpert {__version__}",
     )
     parser.add_argument(dest="file", help="text file to be converted", type=str, metavar="STR")
     parser.add_argument(
