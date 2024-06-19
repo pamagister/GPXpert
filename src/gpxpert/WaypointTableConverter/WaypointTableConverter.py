@@ -1,11 +1,8 @@
 import os.path
 import re
 
-import argparse
-import logging
-import sys
 
-from gpxpert import __version__
+import logging
 
 _logger = logging.getLogger(__name__)
 
@@ -132,6 +129,6 @@ if __name__ == "__main__":
 
     # Usage from terminal:
     #
-    #   src/gpxpert/WaypointTableConverter.py C:/dev/GPXpert/res/test/waypoints_table.txt -vv
+    #   python src/gpxpert/WaypointTableConverter.py C:/dev/GPXpert/res/test/waypoints_table.txt -vv
     #
     run()
