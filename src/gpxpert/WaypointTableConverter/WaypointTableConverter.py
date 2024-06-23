@@ -1,6 +1,7 @@
 import logging
 import os.path
 import re
+import gpxpy
 
 _logger = logging.getLogger(__name__)
 
@@ -15,33 +16,25 @@ class WaypointTableConverter:
         self.textFile = textFile
 
     def ConvertToGpx(self):
-        results = []
+        gpx = gpxpy.gpx.GPX()
+        gpx.name = self.textFile
         with open(self.textFile, 'r') as tableFile:
             lines = tableFile.readlines()
             for line in lines:
-                _logger.debug(f'Process line {line}')
-                result = re.sub(PATTERN, REPLACEMENT, line.strip())
-                results.append(result)
+                match = re.match(PATTERN, line.strip())
 
-        with open(self.textFile + '_GPX' + '.gpx', 'w') as gpxFile:
-            _logger.info(f'write results to: {gpxFile}')
-            gpxFile.write(self.GetHeader())
-            for result in results:
-                gpxFile.write(result + '\n')
-            gpxFile.write(self.GetFooter())
-        return True
+                if match:
+                    gpx_wps = gpxpy.gpx.GPXWaypoint()
+                    number = int(match.group(1))
+                    name = str(match.group(2))
+                    gpx_wps.latitude = float(match.group(3))
+                    gpx_wps.longitude = float(match.group(4))
+                    gpx_wps.name = f'{number} {name}'
+                    gpx.waypoints.append(gpx_wps)
 
-    def GetHeader(self) -> str:
-        filename = os.path.basename(self.textFile)
-        header = (
-            f'<?xml version="1.0" encoding="UTF-8"?>' + '\n'
-            f'<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="python">' + '\n'
-            f'<metadata>' + '\n'
-            f'    <name>{filename}</name>' + '\n'
-            f'</metadata>') + '\n'
-        return header
+        gpxFileName = self.textFile + '_GPX' + '.gpx'
+        with open(gpxFileName, 'w') as gpxFile:
+            _logger.info(f'write results to: {gpxFile.name}')
+            gpxFile.write(gpx.to_xml())
 
-    @staticmethod
-    def GetFooter() -> str:
-        return "</gpx>"
-
+        return gpxFileName
