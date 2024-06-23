@@ -3,7 +3,7 @@ import logging
 import sys
 
 from gpxpert import __version__
-from gpxpert.WaypointTableConverter.WaypointTableConverter import WaypointTableConverter
+from gpxpert.WaypointTableConverter import WaypointTableConverter
 
 _logger = logging.getLogger(__name__)
 
@@ -90,6 +90,6 @@ if __name__ == "__main__":
 
     # Usage from terminal:
     #
-    #   python src/gpxpert/WaypointTableConverter/client.py C:/dev/GPXpert/res/test/waypoints_table.txt -vv
+    #   python src/gpxpert/WaypointTableConverterClient.py C:/dev/GPXpert/res/test/waypoints_table.txt -vv
     #
     run()

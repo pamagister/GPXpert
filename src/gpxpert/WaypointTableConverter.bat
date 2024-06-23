@@ -3,7 +3,7 @@
 if [%1] == [] goto help
 
 for %%a in (%*) do (
-python "%~0/../client.py" %%a -vv
+python "%~0/../WaypointTableConverterClient.py" %%a -vv
 )
 
 pause

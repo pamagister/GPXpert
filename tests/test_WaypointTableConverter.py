@@ -1,4 +1,4 @@
-from gpxpert.WaypointTableConverter.WaypointTableConverter import WaypointTableConverter
+from gpxpert.WaypointTableConverter import WaypointTableConverter
 
 import unittest
 
@@ -6,10 +6,9 @@ import unittest
 class WaypointTableConverterTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        tableFile = '../../../res/test/waypoints_table.txt'
+        tableFile = '../res/test/waypoints_table.txt'
         converter = WaypointTableConverter(tableFile)
         cls.gpxFileName: str = converter.ConvertToGpx()
-
 
     def test_ConvertToGpx(self):
         assert self.gpxFileName
