@@ -1,6 +1,7 @@
 import logging
 import os.path
 import re
+
 import gpxpy
 
 _logger = logging.getLogger(__name__)

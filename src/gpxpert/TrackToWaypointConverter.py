@@ -36,4 +36,3 @@ class TrackToWaypointConverter:
         with open(newGpxFileName, 'w') as gpxFile:
             gpxFile.write(newGpx.to_xml())
         return newGpxFileName
-

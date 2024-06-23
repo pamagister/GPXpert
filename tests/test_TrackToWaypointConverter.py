@@ -19,7 +19,7 @@ class TrackToWaypointConverterTest(unittest.TestCase):
     def test_ConvertToGpx_VerifyContent(self):
         expectedWaypointString = \
             '  <wpt lat="46.022329330444336" lon="8.885900974273682">\n' \
-            '    <ele>808.0</ele>\n'\
+            '    <ele>808.0</ele>\n' \
             '    <name>Tess_01_Cademario - Curio</name>'
         with open(self.gpxFileName, 'r') as gpxFile:
             assert expectedWaypointString in gpxFile.read()
