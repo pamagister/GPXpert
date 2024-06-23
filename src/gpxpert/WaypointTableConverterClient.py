@@ -19,7 +19,7 @@ def main(args):
     _logger.debug("Starting conversion")
     tableFile = args.file
     converter = WaypointTableConverter(tableFile)
-    converter.ConvertToGpx()
+    converter.Convert()
 
     print(f"Convert {args.file}")
     _logger.info("Script ends here")

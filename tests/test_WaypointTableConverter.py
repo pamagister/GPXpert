@@ -8,7 +8,7 @@ class WaypointTableConverterTest(unittest.TestCase):
     def setUpClass(cls):
         tableFile = '../res/test/waypoints_table.txt'
         converter = WaypointTableConverter(tableFile)
-        cls.gpxFileName: str = converter.ConvertToGpx()
+        cls.gpxFileName: str = converter.Convert()
 
     def test_ConvertToGpx(self):
         assert self.gpxFileName

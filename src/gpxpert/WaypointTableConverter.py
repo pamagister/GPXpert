@@ -26,7 +26,7 @@ class WaypointTableConverter:
         assert os.path.isfile(textFile)
         self.textFile = textFile
 
-    def ConvertToGpx(self):
+    def Convert(self):
         gpx = gpxpy.gpx.GPX()
         gpx.name = self.textFile
         with open(self.textFile, 'r') as tableFile:

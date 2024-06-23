@@ -4,24 +4,41 @@ from gpxpert.TrackToWaypointConverter import TrackToWaypointConverter
 
 
 class TrackToWaypointConverterTest(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        gpx1 = '../res/test/Track_01.gpx'
-        gpx2 = '../res/test/Track_22.gpx'
-        filesToSummarize: list = [gpx1, gpx2]
-        converter = TrackToWaypointConverter(filesToSummarize)
-        cls.gpxFileName = converter.Convert()
+    gpx1 = '../res/test/Track_01.gpx'
+    gpx2 = '../res/test/Track_22.gpx'
+    filesToSummarize: list = [gpx1, gpx2]
+    testDir = '../res/test'
 
     def test_Convert(self):
-        assert self.gpxFileName
-        assert self.gpxFileName.endswith('gpx')
+        # setup
+        converter = TrackToWaypointConverter(self.filesToSummarize)
+        gpxFileName = converter.Convert()
+        # assert
+        assert gpxFileName
+        assert gpxFileName.endswith('gpx')
 
-    def test_ConvertToGpx_VerifyContent(self):
+    def test_Convert_VerifyContent(self):
+        # setup
+        converter = TrackToWaypointConverter(self.filesToSummarize)
+        gpxFileName = converter.Convert()
+        # assert
         expectedWaypointString = \
             '  <wpt lat="46.022329330444336" lon="8.885900974273682">\n' \
             '    <ele>808.0</ele>\n' \
             '    <name>Tess_01_Cademario - Curio</name>'
-        with open(self.gpxFileName, 'r') as gpxFile:
+        with open(gpxFileName, 'r') as gpxFile:
+            assert expectedWaypointString in gpxFile.read()
+
+    def test_Convert_VerifyContent_SummarizeDir(self):
+        # setup
+        converter = TrackToWaypointConverter(self.testDir)
+        gpxFileName = converter.Convert()
+        # assert
+        expectedWaypointString = \
+            '  <wpt lat="46.023641685023904" lon="8.856273796409369">\n' \
+            '    <ele>706.0</ele>\n' \
+            '    <name>Tess_02_Monte Lema</name>'
+        with open(gpxFileName, 'r') as gpxFile:
             assert expectedWaypointString in gpxFile.read()
 
 
