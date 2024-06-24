@@ -70,12 +70,12 @@ class TrackToWaypointConverter:
         elif os.path.isdir(contentToConvert):
             self.destinationDir = os.path.dirname(contentToConvert)
             self.saveFileName = os.path.basename(contentToConvert) + '.gpx'
-            self._AddGpxFilesFromDir(contentToConvert)
+            self._ProcessGpxFilesFromDir(contentToConvert)
         elif contentToConvert.endswith('.zip'):
             self.temp_dir = tempfile.mkdtemp()
             self.destinationDir = os.path.dirname(contentToConvert)
             self.saveFileName = os.path.basename(os.path.splitext(contentToConvert)[0]) + '.gpx'
-            self._AddGpxFilesFromZip(contentToConvert)
+            self._ProcessGpxFilesFromZip(contentToConvert)
         elif contentToConvert.endswith('.gpx'):
             self.gpxFiles = contentToConvert,
             self.destinationDir = os.path.dirname(self.gpxFiles[0])
@@ -84,25 +84,30 @@ class TrackToWaypointConverter:
         else:
             raise ValueError("Unsupported input type. Please provide a list of files, a directory, or a zip file.")
 
-    def _AddGpxFilesFromDir(self, directory: str):
-        for filename in os.listdir(directory):
+    def _ProcessGpxFilesFromList(self, dirList: list):
+        for filename in dirList:
             if filename.endswith('.gpx'):
-                self.gpxFiles.append(os.path.join(directory, filename))
+                self.gpxFiles.append(filename)
             elif filename.endswith('.zip'):
-                converter = TrackToWaypointConverter(os.path.join(directory, filename))
+                converter = TrackToWaypointConverter(filename)
                 converter.Convert()
+                converter.Compress()
 
-    def _AddGpxFilesFromZip(self, zip_path: str):
+    def _ProcessGpxFilesFromDir(self, directory: str):
+        files = os.listdir(directory)
+        self._ProcessGpxFilesFromList([os.path.join(directory, file) for file in files])
+
+    def _ProcessGpxFilesFromZip(self, zip_path: str):
         with zipfile.ZipFile(zip_path, 'r') as zip_ref:
             zip_ref.extractall(self.temp_dir)
-            self._AddGpxFilesFromDir(self.temp_dir)
+            self._ProcessGpxFilesFromDir(self.temp_dir)
 
     def __del__(self):
         # Cleanup the temporary directory when the instance is deleted
         if self.temp_dir and os.path.exists(self.temp_dir):
             shutil.rmtree(self.temp_dir)
 
-    def Convert(self):
+    def Convert(self) -> str:
         newGpx = gpxpy.gpx.GPX()
         newGpx.name = f'{self.saveFileName}'
 
@@ -114,7 +119,7 @@ class TrackToWaypointConverter:
 
         return self._Save(newGpx)
 
-    def Compress(self):
+    def Compress(self) -> str:
         resultList = []
         for gpxFileName in self.gpxFiles:
             newGpx = gpxpy.gpx.GPX()
