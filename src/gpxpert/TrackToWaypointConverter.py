@@ -6,6 +6,7 @@ import tempfile
 import zipfile
 
 import gpxpy
+import srtm
 from gpxpy.gpx import GPXXMLSyntaxException, GPX, GPXTrackPoint
 
 _logger = logging.getLogger(__name__)
@@ -18,18 +19,18 @@ def _GetGpxObjectFromFile(gpxFileName: str) -> GPX | None:
     gpx = None
     try:
         with open(gpxFileName, 'r', encoding='utf-8') as gpxFile:
+            lines = gpxFile.readlines()
+        gpxXml = ''.join(lines)
+        headerRegex = r'^(.*?)<metadata>'
+        extensionRegex = r'<extensions>.*?</extensions>'
+        gpxXml = re.sub(headerRegex, VALID_HEADER + '\n<metadata>', gpxXml, flags=re.DOTALL)
+        gpxXml = re.sub(extensionRegex, '', gpxXml, flags=re.DOTALL)
+        with open(gpxFileName, 'w', encoding='utf-8') as file:
+            file.write(gpxXml)
+        with open(gpxFileName, 'r', encoding='utf-8') as gpxFile:
             gpx = gpxpy.parse(gpxFile)
     except GPXXMLSyntaxException:
         try:
-            with open(gpxFileName, 'r', encoding='utf-8') as gpxFile:
-                lines = gpxFile.readlines()
-            gpxXml = ''.join(lines)
-            headerRegex = r'^(.*?)<metadata>'
-            extensionRegex = r'<extensions>.*?</extensions>'
-            gpxXml = re.sub(headerRegex, VALID_HEADER + '\n<metadata>', gpxXml, flags=re.DOTALL)
-            gpxXml = re.sub(extensionRegex, '', gpxXml, flags=re.DOTALL)
-            with open(gpxFileName, 'w', encoding='utf-8') as file:
-                file.write(gpxXml)
             with open(gpxFileName, 'r', encoding='utf-8') as gpxFile:
                 gpx = gpxpy.parse(gpxFile)
         except GPXXMLSyntaxException as err:
@@ -51,6 +52,8 @@ def _GetFirstPointFromGpxFile(gpx: GPX) -> GPXTrackPoint:
 
 
 class TrackToWaypointConverter:
+    ELEVATION_DATA = srtm.get_data()
+
     def __init__(self, contentToConvert: list | str):
         """
         Args:
@@ -66,21 +69,21 @@ class TrackToWaypointConverter:
             self.destinationDir = os.path.dirname(self.gpxFiles[0])
             firstGpxName = os.path.splitext(os.path.basename(self.gpxFiles[0]))[0]
             lastGpxName = os.path.splitext(os.path.basename(self.gpxFiles[-1]))[0]
-            self.saveFileName = firstGpxName + '_' + lastGpxName + '_SUMMARY' + '.gpx'
+            self.saveFileName = firstGpxName + '_' + lastGpxName + '_SUMMARY'
         elif os.path.isdir(contentToConvert):
             self.destinationDir = os.path.dirname(contentToConvert)
-            self.saveFileName = os.path.basename(contentToConvert) + '.gpx'
+            self.saveFileName = os.path.basename(contentToConvert)
             self._ProcessGpxFilesFromDir(contentToConvert)
         elif contentToConvert.endswith('.zip'):
             self.temp_dir = tempfile.mkdtemp()
             self.destinationDir = os.path.dirname(contentToConvert)
-            self.saveFileName = os.path.basename(os.path.splitext(contentToConvert)[0]) + '.gpx'
+            self.saveFileName = os.path.basename(os.path.splitext(contentToConvert)[0])
             self._ProcessGpxFilesFromZip(contentToConvert)
         elif contentToConvert.endswith('.gpx'):
             self.gpxFiles = contentToConvert,
             self.destinationDir = os.path.dirname(self.gpxFiles[0])
             gpxName = os.path.splitext(os.path.basename(self.gpxFiles[0]))[0]
-            self.saveFileName = gpxName + '_NEW' + '.gpx'
+            self.saveFileName = gpxName + '_NEW'
         else:
             raise ValueError("Unsupported input type. Please provide a list of files, a directory, or a zip file.")
 
@@ -120,12 +123,21 @@ class TrackToWaypointConverter:
         return self._Save(newGpx)
 
     def Compress(self) -> str:
+        newGpx = gpxpy.gpx.GPX()
+        newGpx.name = f'{self.saveFileName}'
+
         resultList = []
         for gpxFileName in self.gpxFiles:
-            newGpx = gpxpy.gpx.GPX()
             gpx = _GetGpxObjectFromFile(gpxFileName)
             gpx.reduce_points(min_distance=50)
-            newGpx.waypoints = gpx.waypoints
+            for wpt in gpx.waypoints:
+                newWpt = gpxpy.gpx.GPXWaypoint(
+                    latitude=round(wpt.latitude, 5),
+                    longitude=round(wpt.longitude, 5),
+                    elevation=self._GetAdjustedElevation(wpt),
+                    name=wpt.name
+                )
+                newGpx.waypoints.append(newWpt)
 
             for track in gpx.tracks:
                 newTrack = gpxpy.gpx.GPXTrack(track.name, track.description)
@@ -135,18 +147,25 @@ class TrackToWaypointConverter:
                         point.remove_time()
                         point.latitude = round(point.latitude, 5)
                         point.longitude = round(point.longitude, 5)
-                        point.elevation = round(point.elevation)
+                        point.elevation = self._GetAdjustedElevation(point)
+
                         newSegment.points.append(point)
                     newTrack.segments.append(newSegment)
                 newGpx.tracks.append(newTrack)
-            self.saveFileName = os.path.splitext(os.path.basename(gpxFileName))[0] + '_SMALL' + '.gpx'
-            resultFile = self._Save(newGpx)
-            resultList.append(resultFile)
 
-        return resultList
+        self.saveFileName = self.saveFileName + '_SMALL'
+        return self._Save(newGpx)
+
+    def _GetAdjustedElevation(self, point) -> int | None:
+        try:
+            ele = point.elevation or self.ELEVATION_DATA.get_elevation(point.latitude, point.longitude)
+            return round(ele)
+        except:
+            _logger.error(f'unable to determine elevation in {point.name}')
+        return
 
     def _Save(self, newGpx) -> str:
-        newGpxFileName = os.path.join(self.destinationDir, self.saveFileName)
+        newGpxFileName = os.path.join(self.destinationDir, self.saveFileName) + '.gpx'
         with open(newGpxFileName, 'w', encoding='utf-8') as gpxFile:
             gpxFile.write(newGpx.to_xml())
         return newGpxFileName
