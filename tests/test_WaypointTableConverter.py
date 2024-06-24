@@ -17,6 +17,7 @@ class WaypointTableConverterTest(unittest.TestCase):
     def test_ConvertToGpx_VerifyContent(self):
         expectedWaypointString = \
             '  <wpt lat="46.006348" lon="8.970043">\n' \
+            '    <ele>289</ele>\n' \
             '    <name>9 Monte Bre - Monte Boglia Cassarate</name>\n' \
             '  </wpt>'
         with open(self.gpxFileName, 'r', encoding='utf-8') as gpxFile:

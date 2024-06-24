@@ -4,3 +4,4 @@ setuptools~=70.1.0
 pytest-cov~=5.0.0
 pytest-sugar~=1.0.0
 gpxpy~=1.6.2
+srtm.py~=0.3.7

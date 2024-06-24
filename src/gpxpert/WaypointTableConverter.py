@@ -3,6 +3,7 @@ import os.path
 import re
 
 import gpxpy
+import srtm
 
 _logger = logging.getLogger(__name__)
 
@@ -29,6 +30,7 @@ class WaypointTableConverter:
     def Convert(self):
         gpx = gpxpy.gpx.GPX()
         gpx.name = self.textFile
+        elevation_data = srtm.get_data()
         with open(self.textFile, 'r') as tableFile:
             lines = tableFile.readlines()
             for line in lines:
@@ -36,6 +38,7 @@ class WaypointTableConverter:
 
                 if match:
                     gpx_wps = _ExtractWaypointInformationFromMatch(match)
+                    gpx_wps.elevation = elevation_data.get_elevation(gpx_wps.latitude, gpx_wps.longitude)
                     gpx.waypoints.append(gpx_wps)
 
         gpxFileName = self._Save(gpx)
