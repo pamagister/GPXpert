@@ -54,6 +54,20 @@ class TrackToWaypointConverterTest(unittest.TestCase):
         with open(gpxFileName, 'r', encoding='utf-8') as gpxFile:
             assert expectedWaypointString in gpxFile.read()
 
+    def test_Compress(self):
+        # setup
+        converter = TrackToWaypointConverter(self.gpx1)
+        gpxFileName = converter.Compress()
+        # assert
+        expectedWaypointString = \
+            '    <name>Tess_01_Cademario - Curio</name>\n' \
+            '    <trkseg>\n' \
+            '      <trkpt lat="46.02233" lon="8.8859">\n' \
+            '        <ele>808</ele>\n' \
+            '      </trkpt>\n'
+        with open(gpxFileName, 'r', encoding='utf-8') as gpxFile:
+            assert expectedWaypointString in gpxFile.read()
+
 
 if __name__ == '__main__':
     unittest.main()

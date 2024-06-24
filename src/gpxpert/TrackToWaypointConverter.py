@@ -33,9 +33,9 @@ def _GetGpxObjectFromFile(gpxFileName: str) -> GPX | None:
             with open(gpxFileName, 'r', encoding='utf-8') as gpxFile:
                 gpx = gpxpy.parse(gpxFile)
         except GPXXMLSyntaxException as err:
-            _logger.error(f'Failed to parse {gpxFile.name}')
+            _logger.error(f'Failed to parse {gpxFileName}')
     except:
-        _logger.error(f' Fatal: Failed to parse {gpxFile.name}')
+        _logger.error(f' Fatal: Failed to parse {gpxFileName}')
     return gpx
 
 
@@ -64,9 +64,9 @@ class TrackToWaypointConverter:
         if isinstance(contentToConvert, list):
             self.gpxFiles = contentToConvert
             self.destinationDir = os.path.dirname(self.gpxFiles[0])
-            fistGpxName = os.path.splitext(os.path.basename(self.gpxFiles[0]))[0]
+            firstGpxName = os.path.splitext(os.path.basename(self.gpxFiles[0]))[0]
             lastGpxName = os.path.splitext(os.path.basename(self.gpxFiles[-1]))[0]
-            self.saveFileName = fistGpxName + '_' + lastGpxName + '_SUMMARY' + '.gpx'
+            self.saveFileName = firstGpxName + '_' + lastGpxName + '_SUMMARY' + '.gpx'
         elif os.path.isdir(contentToConvert):
             self.destinationDir = os.path.dirname(contentToConvert)
             self.saveFileName = os.path.basename(contentToConvert) + '.gpx'
@@ -76,6 +76,11 @@ class TrackToWaypointConverter:
             self.destinationDir = os.path.dirname(contentToConvert)
             self.saveFileName = os.path.basename(os.path.splitext(contentToConvert)[0]) + '.gpx'
             self._AddGpxFilesFromZip(contentToConvert)
+        elif contentToConvert.endswith('.gpx'):
+            self.gpxFiles = contentToConvert,
+            self.destinationDir = os.path.dirname(self.gpxFiles[0])
+            gpxName = os.path.splitext(os.path.basename(self.gpxFiles[0]))[0]
+            self.saveFileName = gpxName + '_NEW' + '.gpx'
         else:
             raise ValueError("Unsupported input type. Please provide a list of files, a directory, or a zip file.")
 
@@ -108,6 +113,28 @@ class TrackToWaypointConverter:
                 newGpx.waypoints.append(firstPoint)
 
         return self._Save(newGpx)
+
+    def Compress(self):
+        for gpxFileName in self.gpxFiles:
+            newGpx = gpxpy.gpx.GPX()
+            gpx = _GetGpxObjectFromFile(gpxFileName)
+            gpx.reduce_points(min_distance=50)
+            newGpx.waypoints = gpx.waypoints
+
+            for track in gpx.tracks:
+                newTrack = gpxpy.gpx.GPXTrack(track.name, track.description)
+                for segment in track.segments:
+                    newSegment = gpxpy.gpx.GPXTrackSegment()
+                    for point in segment.points:
+                        point.remove_time()
+                        point.latitude = round(point.latitude, 5)
+                        point.longitude = round(point.longitude, 5)
+                        point.elevation = round(point.elevation)
+                        newSegment.points.append(point)
+                    newTrack.segments.append(newSegment)
+                newGpx.tracks.append(newTrack)
+
+            return self._Save(newGpx)
 
     def _Save(self, newGpx) -> str:
         newGpxFileName = os.path.join(self.destinationDir, self.saveFileName)
