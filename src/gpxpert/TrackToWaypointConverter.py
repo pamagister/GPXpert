@@ -115,6 +115,7 @@ class TrackToWaypointConverter:
         return self._Save(newGpx)
 
     def Compress(self):
+        resultList = []
         for gpxFileName in self.gpxFiles:
             newGpx = gpxpy.gpx.GPX()
             gpx = _GetGpxObjectFromFile(gpxFileName)
@@ -133,8 +134,11 @@ class TrackToWaypointConverter:
                         newSegment.points.append(point)
                     newTrack.segments.append(newSegment)
                 newGpx.tracks.append(newTrack)
+            self.saveFileName = os.path.splitext(os.path.basename(gpxFileName))[0] + '_SMALL' + '.gpx'
+            resultFile = self._Save(newGpx)
+            resultList.append(resultFile)
 
-            return self._Save(newGpx)
+        return resultList
 
     def _Save(self, newGpx) -> str:
         newGpxFileName = os.path.join(self.destinationDir, self.saveFileName)
