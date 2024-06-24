@@ -6,7 +6,7 @@ import tempfile
 import zipfile
 
 import gpxpy
-from gpxpy.gpx import GPXXMLSyntaxException
+from gpxpy.gpx import GPXXMLSyntaxException, GPX, GPXTrackPoint
 
 _logger = logging.getLogger(__name__)
 
@@ -14,7 +14,8 @@ VALID_HEADER = """<?xml version="1.0" encoding="UTF-8"?>
 <gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="gpx.py -- https://github.com/tkrajina/gpxpy">"""
 
 
-def _GetFirstPointFromGpxFile(gpxFileName):
+def _GetGpxObjectFromFile(gpxFileName: str) -> GPX | None:
+    gpx = None
     try:
         with open(gpxFileName, 'r', encoding='utf-8') as gpxFile:
             gpx = gpxpy.parse(gpxFile)
@@ -33,19 +34,20 @@ def _GetFirstPointFromGpxFile(gpxFileName):
                 gpx = gpxpy.parse(gpxFile)
         except GPXXMLSyntaxException as err:
             _logger.error(f'Failed to parse {gpxFile.name}')
-            return None
     except:
-        _logger.error(f'Fatal: Failed to parse {gpxFile.name}')
-        return None
+        _logger.error(f' Fatal: Failed to parse {gpxFile.name}')
+    return gpx
 
-    for track in gpx.tracks:
-        trackName = track.name
-        segment = track.segments[0]
-        firstPoint = segment.points[0]
-        firstPoint.name = trackName
-        firstPoint.time = None
-        return firstPoint
-    return None
+
+def _GetFirstPointFromGpxFile(gpx: GPX) -> GPXTrackPoint:
+    if gpx:
+        for track in gpx.tracks:
+            trackName = track.name
+            segment = track.segments[0]
+            firstPoint = segment.points[0]
+            firstPoint.name = trackName
+            firstPoint.time = None
+            return firstPoint
 
 
 class TrackToWaypointConverter:
@@ -100,7 +102,8 @@ class TrackToWaypointConverter:
         newGpx.name = f'{self.saveFileName}'
 
         for gpxFileName in self.gpxFiles:
-            firstPoint = _GetFirstPointFromGpxFile(gpxFileName)
+            gpx = _GetGpxObjectFromFile(gpxFileName)
+            firstPoint = _GetFirstPointFromGpxFile(gpx)
             if firstPoint:
                 newGpx.waypoints.append(firstPoint)
 
