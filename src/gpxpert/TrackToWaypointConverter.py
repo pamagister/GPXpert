@@ -25,7 +25,7 @@ def _GetFirstPointFromGpxFile(gpxFileName):
             gpxXml = ''.join(lines)
             headerRegex = r'^(.*?)<metadata>'
             extensionRegex = r'<extensions>.*?</extensions>'
-            gpxXml = re.sub(headerRegex, VALID_HEADER+'\n<metadata>', gpxXml, flags=re.DOTALL)
+            gpxXml = re.sub(headerRegex, VALID_HEADER + '\n<metadata>', gpxXml, flags=re.DOTALL)
             gpxXml = re.sub(extensionRegex, '', gpxXml, flags=re.DOTALL)
             with open(gpxFileName, 'w', encoding='utf-8') as file:
                 file.write(gpxXml)
