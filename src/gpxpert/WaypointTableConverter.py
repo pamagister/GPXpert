@@ -44,7 +44,7 @@ class WaypointTableConverter:
 
     def _Save(self, gpx):
         gpxFileName = os.path.splitext(self.textFile)[0] + '_GPX' + '.gpx'
-        with open(gpxFileName, 'w') as gpxFile:
+        with open(gpxFileName, 'w', encoding='utf-8') as gpxFile:
             _logger.info(f'write results to: {gpxFile.name}')
             gpxFile.write(gpx.to_xml())
         return gpxFileName

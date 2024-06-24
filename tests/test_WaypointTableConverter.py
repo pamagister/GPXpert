@@ -19,5 +19,5 @@ class WaypointTableConverterTest(unittest.TestCase):
             '  <wpt lat="46.006348" lon="8.970043">\n' \
             '    <name>9 Monte Bre - Monte Boglia Cassarate</name>\n' \
             '  </wpt>'
-        with open(self.gpxFileName, 'r') as gpxFile:
+        with open(self.gpxFileName, 'r', encoding='utf-8') as gpxFile:
             assert expectedWaypointString in gpxFile.read()
